@@ -36,7 +36,6 @@ mutable struct JLPreprocessor <: Learner
       :name => "jlprep",
 		:preprocessor => "PCA",
       :impl_args => Dict(),
-		:autocomponent => true,
 		:tol => 0.1,
 		:n_components =>0
     )
@@ -64,11 +63,11 @@ function fit!(prep::JLPreprocessor, x::DataFrame, y::Vector=[])
   autocomp = prep.args[:autocomponent]
   ncomponents=prep.args[:n_components]
   xn = (Matrix(x))' |> collect
+  # if ncomponents not set, use autocomp
   if ncomponents == 0
 	 ncomponents = min(size(xn)...)
 	 impl_args[:n_components] = ncomponents
-  end
-  if autocomp == true
+  else # autocomp
 	 cols = ncol(x)
 	 if cols > 0
 		ncomponents = round(sqrt(cols),digits=0) |> Integer
