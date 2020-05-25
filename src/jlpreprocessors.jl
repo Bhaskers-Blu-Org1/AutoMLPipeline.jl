@@ -60,7 +60,6 @@ function fit!(prep::JLPreprocessor, x::DataFrame, y::Vector=[])
   @assert !isempty(x)
   impl_args = copy(prep.args[:impl_args])
   proc = jlpreproc_dict[prep.args[:preprocessor]]
-  autocomp = prep.args[:autocomponent]
   ncomponents=prep.args[:n_components]
   xn = (Matrix(x))' |> collect
   # if ncomponents not set, use autocomp
