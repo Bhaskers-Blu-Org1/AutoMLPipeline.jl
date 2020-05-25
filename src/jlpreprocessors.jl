@@ -37,6 +37,7 @@ mutable struct JLPreprocessor <: Learner
 		:preprocessor => "PCA",
       :impl_args => Dict(),
 		:autocomponent => true,
+		:tol => 0.1,
 		:n_components =>0
     )
     cargs = nested_dict_merge(default_args, args)
@@ -76,7 +77,8 @@ function fit!(prep::JLPreprocessor, x::DataFrame, y::Vector=[])
   end
   preproc = nothing
   if proc == ICA
-	 preproc = fit(proc,xn,ncomponents,tol=0.05)
+	 tolerance = prep.args[:tol]
+	 preproc = fit(proc,xn,ncomponents,tol=tolerance)
   else
 	 preproc = fit(proc,xn,maxoutdim = ncomponents)
   end
