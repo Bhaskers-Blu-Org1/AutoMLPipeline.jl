@@ -33,11 +33,11 @@ mutable struct JLPreprocessor <: Learner
   
   function JLPreprocessor(args=Dict())
     default_args = Dict( 
-      :name => "jlprep",
+      :name         => "pca",
 		:preprocessor => "PCA",
-      :impl_args => Dict(),
-		:tol => 0.1,
-		:n_components =>0
+		:tol          => 1.0,
+		:n_components => 0,
+      :impl_args    => Dict()
     )
     cargs = nested_dict_merge(default_args, args)
     cargs[:name] = cargs[:name]*"_"*randstring(3)
@@ -63,27 +63,25 @@ function fit!(prep::JLPreprocessor, x::DataFrame, y::Vector=[])
   ncomponents=prep.args[:n_components]
   xn = (Matrix(x))' |> collect
   # if ncomponents not set, use autocomp
+  maxcomp = min(size(xn)...)
   if ncomponents == 0
-	 ncomponents = min(size(xn)...)
-	 impl_args[:n_components] = ncomponents
+	 # use autocomp
+	 nc = round(sqrt(maxcomp),digits=0) |> Integer
+	 impl_args[:n_components] = nc
   else # autocomp
-	 cols = ncol(x)
-	 if cols > 0
-		ncomponents = round(sqrt(cols),digits=0) |> Integer
-		impl_args[:n_components] = ncomponents
-	 end
+	 impl_args[:n_components] = ncomponents
   end
-  preproc = nothing
+  pmodel = nothing
   if proc == ICA
 	 tolerance = prep.args[:tol]
-	 preproc = fit(proc,xn,ncomponents,tol=tolerance)
+	 pmodel = fit(proc,xn,ncomponents,tol=tolerance)
   else
-	 preproc = fit(proc,xn,maxoutdim = ncomponents)
+	 pmodel = fit(proc,xn,maxoutdim = ncomponents)
   end
   prep.model = Dict(
-		:preprocessor => preproc,
-		:impl_args => impl_args
-  )
+						  :preprocessor => pmodel,
+						  :impl_args => impl_args
+						 )
 end
 
 function transform!(prep::JLPreprocessor, x::DataFrame)
