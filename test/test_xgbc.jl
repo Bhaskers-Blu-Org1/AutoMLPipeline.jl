@@ -3,7 +3,7 @@ module TestXgbc
 using Test
 using Random
 using AutoMLPipeline
-using AutoMLPipeline.GradientBoostingClassifiers
+using AutoMLPipeline.XGBoostLearners
 using AutoMLPipeline.CrossValidators
 using AutoMLPipeline.Utils
 

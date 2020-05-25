@@ -8,6 +8,8 @@ warnings = pyimport("warnings")
 warnings.filterwarnings("ignore")
 
 # test modules
+include("test_jlpreprocessor.jl")
+include("test_xgbc.jl")
 include("test_baseline.jl")
 include("test_skpreprocessing.jl")
 include("test_decisiontree.jl")
@@ -18,6 +20,7 @@ include("test_skcrossvalidator.jl")
 include("test_featureselector.jl")
 include("test_pipeline.jl")
 include("test_naremover.jl")
+
 
 #include("test_valdate.jl")
 #include("test_mlbase.jl")

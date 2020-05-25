@@ -1,7 +1,7 @@
 module JLPreprocessors
 
-include("MultivariateStats/src/MultivariateStats.jl")
-using .MultivariateStats
+#include("MultivariateStats/src/MultivariateStats.jl")
+#using .MultivariateStats: fit, transform, PCA, PPCA, ICA, FactorAnalysis
 
 # standard included modules
 using DataFrames
@@ -14,12 +14,16 @@ export fit!, transform!
 
 export JLPreprocessor
 
-const jlpreproc_dict = Dict(
-	"PCA" => PCA, 
-	"PPCA" => PPCA,
-	"ICA" => ICA, 
-	"FA" => FactorAnalysis,
-)
+function __init__()
+  @eval using MultivariateStats
+  global jlpreproc_dict = Dict(
+										"PCA" => PCA, 
+										"PPCA" => PPCA,
+										"ICA" => ICA, 
+										"FA" => FactorAnalysis,
+										)
+end
+
 
 mutable struct JLPreprocessor <: Learner
   name::String

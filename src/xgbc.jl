@@ -1,6 +1,6 @@
 module XGBoostLearners
 
-import XGBoost
+#import XGBoost
 import MLBase
 
 # standard modules
@@ -14,6 +14,10 @@ import AutoMLPipeline.AbsTypes: fit!, transform!
 export fit!, transform!
 
 export Xgbc
+
+function __init__()
+  @eval using XGBoost
+end
 
 mutable struct Xgbc <: Learner
   name::String

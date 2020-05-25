@@ -60,7 +60,6 @@ include("xgbc.jl")
 using .XGBoostLearners
 export Xgbc
 
-
 include("pipelines.jl")
 using .Pipelines
 export @pipeline, @pipelinex, @pipelinez
