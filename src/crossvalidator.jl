@@ -50,8 +50,11 @@ function crossvalidate(pl::Machine,X::DataFrame,Y::Vector,
 		  println("fold: ",fold,", ",res)
 		end
 	 catch e
-		println(e)
 		error += 1
+		if error == 1
+		  println(e)
+		  Base.invokelatest(Base.display_error, Base.catch_stack())
+		end
 	 end
   end
   if verbose == true
