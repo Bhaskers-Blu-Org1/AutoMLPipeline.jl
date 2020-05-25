@@ -63,10 +63,10 @@ function fit!(prep::JLPreprocessor, x::DataFrame, y::Vector=[])
   ncomponents=prep.args[:n_components]
   xn = (Matrix(x))' |> collect
   # if ncomponents not set, use autocomp
-  maxcomp = min(size(xn)...)
+  maxcomp = ncol(x)
   if ncomponents == 0
 	 # use autocomp
-	 ncomponents = round(sqrt(maxcomp),digits=0) |> Integer
+	 nc = round(sqrt(maxcomp),digits=0) |> Integer
   end
   impl_args[:n_components] = ncomponents
   pmodel = nothing
