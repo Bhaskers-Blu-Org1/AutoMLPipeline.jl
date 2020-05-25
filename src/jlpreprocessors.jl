@@ -66,11 +66,9 @@ function fit!(prep::JLPreprocessor, x::DataFrame, y::Vector=[])
   maxcomp = min(size(xn)...)
   if ncomponents == 0
 	 # use autocomp
-	 nc = round(sqrt(maxcomp),digits=0) |> Integer
-	 impl_args[:n_components] = nc
-  else # autocomp
-	 impl_args[:n_components] = ncomponents
+	 ncomponents = round(sqrt(maxcomp),digits=0) |> Integer
   end
+  impl_args[:n_components] = ncomponents
   pmodel = nothing
   if proc == ICA
 	 tolerance = prep.args[:tol]
