@@ -1,5 +1,6 @@
 module AutoMLPipeline
 
+
 greet() = print("Hello World!")
 export fit!, transform!, fit_transform!
 
@@ -50,6 +51,15 @@ export crossvalidate
 include("naremover.jl")
 using .NARemovers
 export NARemover
+
+include("jlpreprocessors.jl")
+using .JLPreprocessors
+export JLPreprocessor
+
+include("xgbc.jl")
+using .XGBoostLearners
+export Xgbc
+
 
 include("pipelines.jl")
 using .Pipelines
