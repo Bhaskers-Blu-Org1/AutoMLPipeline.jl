@@ -20,8 +20,7 @@ function __init__()
 										"PCA" => PCA, 
 										"PPCA" => PPCA,
 										"ICA" => ICA, 
-										"FA" => FactorAnalysis,
-										"Whiten" => Whitening
+										"FA" => FactorAnalysis
 										)
 end
 
