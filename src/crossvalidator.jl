@@ -51,6 +51,8 @@ function crossvalidate(pl::Machine,X::DataFrame,Y::Vector,
 		end
 	 catch e
 		error += 1
+		res = NaN
+		push!(pacc,res)
 		if error == 1
 		  println(e)
 		  Base.invokelatest(Base.display_error, Base.catch_stack())
