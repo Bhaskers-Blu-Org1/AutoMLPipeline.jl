@@ -1,6 +1,6 @@
 module SKCrossValidators
 
-using PyCall
+import PyCall
 
 # standard included modules
 using DataFrames
@@ -12,32 +12,32 @@ import AutoMLPipeline.CrossValidators.crossvalidate
 export crossvalidate
 
 function __init__()
-    global SKM = pyimport_conda("sklearn.metrics","scikit-learn")
+    global gSKM = PyCall.pyimport_conda("sklearn.metrics","scikit-learn")
     global metric_dict = Dict(
-          "roc_auc_score" => SKM.roc_auc_score,
-          "accuracy_score" => SKM.accuracy_score,
-          "auc" => SKM.auc,
-          "average_precision_score" => SKM.average_precision_score,
-          "balanced_accuracy_score" => SKM.balanced_accuracy_score,
-          "brier_score_loss" => SKM.brier_score_loss,
-          "classification_report" => SKM.classification_report,
-          "cohen_kappa_score" => SKM.cohen_kappa_score,
-          "confusion_matrix" => SKM.confusion_matrix,
-          "f1_score" => SKM.f1_score,
-          "fbeta_score" => SKM.fbeta_score,
-          "hamming_loss" => SKM.hamming_loss,
-          "hinge_loss" => SKM.hinge_loss,
-          "log_loss" => SKM.log_loss,
-          "matthews_corrcoef" => SKM.matthews_corrcoef,
-          "multilabel_confusion_matrix" => SKM.multilabel_confusion_matrix,
-          "precision_recall_curve" => SKM.precision_recall_curve,
-          "precision_recall_fscore_support" => SKM.precision_recall_fscore_support,
-          "precision_score" => SKM.precision_score,
-          "recall_score" => SKM.recall_score,
-          "roc_auc_score" => SKM.roc_auc_score,
-          "roc_curve" => SKM.roc_curve,
-          "jaccard_score" => SKM.jaccard_score,
-          "zero_one_loss" => SKM.zero_one_loss
+          "roc_auc_score"                   => gSKM.roc_auc_score,
+          "accuracy_score"                  => gSKM.accuracy_score,
+          "auc"                             => gSKM.auc,
+          "average_precision_score"         => gSKM.average_precision_score,
+          "balanced_accuracy_score"         => gSKM.balanced_accuracy_score,
+          "brier_score_loss"                => gSKM.brier_score_loss,
+          "classification_report"           => gSKM.classification_report,
+          "cohen_kappa_score"               => gSKM.cohen_kappa_score,
+          "confusion_matrix"                => gSKM.confusion_matrix,
+          "f1_score"                        => gSKM.f1_score,
+          "fbeta_score"                     => gSKM.fbeta_score,
+          "hamming_loss"                    => gSKM.hamming_loss,
+          "hinge_loss"                      => gSKM.hinge_loss,
+          "log_loss"                        => gSKM.log_loss,
+          "matthews_corrcoef"               => gSKM.matthews_corrcoef,
+          "multilabel_confusion_matrix"     => gSKM.multilabel_confusion_matrix,
+          "precision_recall_curve"          => gSKM.precision_recall_curve,
+          "precision_recall_fscore_support" => gSKM.precision_recall_fscore_support,
+          "precision_score"                 => gSKM.precision_score,
+          "recall_score"                    => gSKM.recall_score,
+          "roc_auc_score"                   => gSKM.roc_auc_score,
+          "roc_curve"                       => gSKM.roc_curve,
+          "jaccard_score"                   => gSKM.jaccard_score,
+          "zero_one_loss"                   => gSKM.zero_one_loss
          )
 end
 
