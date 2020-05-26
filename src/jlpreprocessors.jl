@@ -8,12 +8,15 @@ using DataFrames
 using Random
 using AutoMLPipeline.AbsTypes
 using AutoMLPipeline.Utils
+using AutoMLPipeline
 
 import AutoMLPipeline.AbsTypes: fit!, transform!
 export fit!, transform!
 
 export JLPreprocessor
+export testjlprep
 
+# need this because multivariatestats load binaries thru arpack
 function __init__()
   @eval using MultivariateStats
   global jlpreproc_dict = Dict(
@@ -62,19 +65,32 @@ function fit!(prep::JLPreprocessor, x::DataFrame, y::Vector=[])
   ncomponents=prep.args[:n_components]
   xn = (Matrix(x))' |> collect
   # if ncomponents not set, use autocomp
+  pmodel = nothing
   if ncomponents == 0
 	 # use autocomp
-	 maxcomp = ncol(x)
-	 ncomponents = round(sqrt(maxcomp),digits=0) |> Integer
+	 if proc == ICA 
+		maxcomp = ncol(x)
+		ncomponents = round(sqrt(maxcomp),digits=0) |> Integer
+		tolerance = prep.args[:tol]
+		pmodel = fit(proc,xn,ncomponents,tol=tolerance)
+	 elseif proc == PCA || proc == PPCA
+		maxcomp = min(size(xn)...)
+		ncomponents = round(sqrt(maxcomp),digits=0) |> Integer
+		pmodel = fit(proc,xn,maxoutdim = ncomponents)
+	 elseif proc == FactorAnalysis
+		maxcomp = ncol(x)-1
+		ncomponents = round(sqrt(maxcomp),digits=0) |> Integer
+		pmodel = fit(proc,xn,maxoutdim = ncomponents)
+	 end
+  else
+	 if proc == ICA
+		tolerance = prep.args[:tol]
+		pmodel = fit(proc,xn,ncomponents,tol=tolerance)
+	 else
+		pmodel = fit(proc,xn,maxoutdim = ncomponents)
+	 end
   end
   impl_args[:n_components] = ncomponents
-  pmodel = nothing
-  if proc == ICA
-	 tolerance = prep.args[:tol]
-	 pmodel = fit(proc,xn,ncomponents,tol=tolerance)
-  else
-	 pmodel = fit(proc,xn,maxoutdim = ncomponents)
-  end
   prep.model = Dict(
 						  :preprocessor => pmodel,
 						  :impl_args => impl_args
@@ -86,6 +102,32 @@ function transform!(prep::JLPreprocessor, x::DataFrame)
   preproc = prep.model[:preprocessor]
   res=transform(preproc,xn)
   return res' |> collect |> DataFrame
+end
+
+function testjlprep(nc::Int)
+  profbdata = getprofb()
+  X = profbdata[:,2:end]
+  Y = profbdata[:,1] |> Vector;
+  ohe = OneHotEncoder()
+  catf = CatFeatureSelector();
+  numf = NumFeatureSelector()
+  rf = RandomForest();
+  ada = Adaboost()
+  dt=PrunedTree()
+  pca = JLPreprocessor("PCA",Dict(:n_components => nc))
+  fa = JLPreprocessor("FA",Dict(:n_components   => nc))
+  ica = JLPreprocessor("ICA",Dict(:tol          => 1.0,:n_components => nc))
+  accuracy(X,Y)=score(:accuracy,X,Y)
+  acc=[]
+  learners=[rf,ada,dt]
+  for lr in learners
+	 println(lr.name)
+	 #pipe=@pipeline ((catf |> ohe) +((numf) |> (fa +  ica + pca ))) |> lr
+	 pipe=@pipeline ((catf |> ohe) +((numf) |> ( ica + pca ))) |> lr
+	 m=crossvalidate(pipe,X,Y,accuracy,10,false)
+	 push!(acc,m)
+	 println(m)
+  end
 end
 
 end # module

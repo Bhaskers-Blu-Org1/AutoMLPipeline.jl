@@ -13,12 +13,12 @@ export NARemover
 
 
 """
-NARemover(
-Dict(
-:name => "nadetect",
-:acceptance => 0.10 # tolerable NAs percentage
-)
-)
+    NARemover(
+      Dict(
+        :name => "nadetect",
+        :acceptance => 0.10 # tolerable NAs percentage
+      )
+    )
 
 Removes columns with NAs greater than acceptance rate.
 This assumes that it processes columns of features. 

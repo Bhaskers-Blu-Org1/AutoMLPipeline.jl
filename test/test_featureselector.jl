@@ -66,28 +66,17 @@ function diabetes_test()
     ohe = OneHotEncoder()
     catf = CatFeatureSelector()
     numf = NumFeatureSelector()
-
+    Random.seed!(123)
     disc = CatNumDiscriminator(0)
     pl = @pipeline disc |> ((numf |>  pca) + (catf |> ohe)) |> jrf
     @test crossvalidate(pl,X,Y,"accuracy_score",10,false).mean > 0.60
-
+    Random.seed!(123)
     pl = @pipeline disc |> ((numf |> rbs |>  pca) + (catf |> ohe)) |> lsvc
     @test crossvalidate(pl,X,Y,"accuracy_score",10,false).mean > 0.60
-
+    Random.seed!(123)
     pl = @pipeline disc |> ((numf |> rbs |>  ica) + (catf |> ohe)) |> rf
     @test crossvalidate(pl,X,Y,"accuracy_score",10,false).mean > 0.60
-
-    disc = CatNumDiscriminator(20)
-    pl = @pipeline disc |> ( (catf |> ohe)) |> jrf
-    @test crossvalidate(pl,X,Y,"accuracy_score",20,false).mean > 0.60
-
-    disc = CatNumDiscriminator(50)
-    pl = @pipeline disc |> ((numf |> rbs |>  pca) + (catf |> ohe)) |> lsvc
-    @test crossvalidate(pl,X,Y,"accuracy_score",20,false).mean > 0.60
-
-    disc = CatNumDiscriminator(100)
-    pl = @pipeline disc |> ((numf |> rbs |>  ica) + (catf |> ohe)) |> rf
-    @test crossvalidate(pl,X,Y,"accuracy_score",20,false).mean > 0.60
+    Random.seed!(123)
 end
 @testset "Feature Selectors: Diabetes" begin
     Random.seed!(123)

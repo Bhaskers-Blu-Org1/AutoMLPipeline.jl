@@ -15,6 +15,7 @@ export fit!, transform!
 
 export Xgbc
 
+# need this because xgboost loads binaries
 function __init__()
   @eval using XGBoost
 end
@@ -26,10 +27,10 @@ mutable struct Xgbc <: Learner
 
   function Xgbc(args::Dict = Dict())
 	 default_args = Dict(
-								:name => "xgbc",
+								:name      => "xgbc",
 								:impl_args => Dict(),
 								:num_round => 100,
-								:silent => true
+								:silent    => true
 								)
 	 cargs=nested_dict_merge(default_args,args)
 	 cargs[:name] = cargs[:name]*"_"*randstring(3)
