@@ -4,7 +4,7 @@ module JLPreprocessors
 #using .MultivariateStats: fit, transform, PCA, PPCA, ICA, FactorAnalysis
 
 # standard included modules
-using DataFrames
+using DataFrames: DataFrame, nrow, ncol
 using Random
 using AutoMLPipeline.AbsTypes
 using AutoMLPipeline.Utils
@@ -19,6 +19,7 @@ export testjlprep
 # need this because multivariatestats load binaries thru arpack
 function __init__()
   @eval using MultivariateStats
+  global MV = MultivariateStats
   global jlpreproc_dict = Dict(
 										"PCA" => PCA, 
 										"PPCA" => PPCA,
@@ -72,22 +73,22 @@ function fit!(prep::JLPreprocessor, x::DataFrame, y::Vector=[])
 		maxcomp = ncol(x)
 		ncomponents = round(sqrt(maxcomp),digits=0) |> Integer
 		tolerance = prep.args[:tol]
-		pmodel = fit(proc,xn,ncomponents,tol=tolerance)
+		pmodel = MV.fit(proc,xn,ncomponents,tol=tolerance)
 	 elseif proc == PCA || proc == PPCA
 		maxcomp = min(size(xn)...)
 		ncomponents = round(sqrt(maxcomp),digits=0) |> Integer
-		pmodel = fit(proc,xn,maxoutdim = ncomponents)
+		pmodel = MV.fit(proc,xn,maxoutdim = ncomponents)
 	 elseif proc == FactorAnalysis
 		maxcomp = ncol(x)-1
 		ncomponents = round(sqrt(maxcomp),digits=0) |> Integer
-		pmodel = fit(proc,xn,maxoutdim = ncomponents)
+		pmodel = MV.fit(proc,xn,maxoutdim = ncomponents)
 	 end
   else
 	 if proc == ICA
 		tolerance = prep.args[:tol]
-		pmodel = fit(proc,xn,ncomponents,tol=tolerance)
+		pmodel = MV.fit(proc,xn,ncomponents,tol=tolerance)
 	 else
-		pmodel = fit(proc,xn,maxoutdim = ncomponents)
+		pmodel = MV.fit(proc,xn,maxoutdim = ncomponents)
 	 end
   end
   impl_args[:n_components] = ncomponents
@@ -100,7 +101,7 @@ end
 function transform!(prep::JLPreprocessor, x::DataFrame)
   xn = (Matrix(x))' |> collect
   preproc = prep.model[:preprocessor]
-  res=transform(preproc,xn)
+  res=MV.transform(preproc,xn)
   return res' |> collect |> DataFrame
 end
 

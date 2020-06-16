@@ -1,7 +1,7 @@
 module TestJLPreprocessor
 
 using Random
-using DataFrames
+using DataFrames: DataFrame, nrow, ncol
 using Test
 using AutoMLPipeline
 using AutoMLPipeline.JLPreprocessors
